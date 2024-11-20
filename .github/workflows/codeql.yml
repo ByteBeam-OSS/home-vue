@@ -1,41 +1,42 @@
-name: "CodeQL Advanced"
+name: "CodeQL Analysis"
 
 on:
-  push:
-    branches: [ "master" ]
+  push:  # Trigger on all pushes, including tags
+    tags:  # Run on tag pushes
+      - '*'
+    branches:  # Run on branch pushes
+      - '**'
   pull_request:
-    branches: [ "master" ]
+    branches:
+      - '**' # Run on all pull requests
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 0 * * *' # Run daily at midnight UTC
 
 jobs:
   analyze:
-    name: Analyze (${{ matrix.language }})
+    name: Analyze Code with CodeQL
     runs-on: ubuntu-latest
+
     permissions:
-      security-events: write
       contents: read
+      security-events: write
 
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - language: javascript-typescript
-            build-mode: none
+        language: [javascript]  # Correct language names for CodeQL
 
     steps:
+      # Checkout the code
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
+      # Initialize the CodeQL tools
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v2
         with:
           languages: ${{ matrix.language }}
-          build-mode: ${{ matrix.build-mode }}
 
-      # Add any necessary build steps here if your project requires them.
-
+      # Run the CodeQL analysis
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
-        with:
-          category: "/language:${{matrix.language}}"
+        uses: github/codeql-action/analyze@v2
