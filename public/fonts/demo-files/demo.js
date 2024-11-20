@@ -14,8 +14,14 @@ document.body.addEventListener("click", function(e) {
     var fontSize = document.getElementById('fontSize'),
         testDrive = document.getElementById('testDrive'),
         testText = document.getElementById('testText');
+    function escapeHTML(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+    }
+
     function updateTest() {
-        testDrive.innerHTML = testText.value || String.fromCharCode(160);
+        testDrive.innerHTML = escapeHTML(testText.value) || String.fromCharCode(160);
         if (window.icomoonLiga) {
             window.icomoonLiga(testDrive);
         }
